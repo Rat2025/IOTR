@@ -1,0 +1,17 @@
+import time
+import RPi.GPIO as GPIO
+button_pin=4
+led_pin=18
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(4,GPIO.IN)
+GPIO.setup(18,GPIO.OUT)
+try:
+  while True:
+    k=GPIO.input(4)
+    if k==GPIO.HIGH:
+      GPIO.output(18,GPIO.HIGH)
+    else:
+      GPIO.output(18,GPIO.LOW)
+    time.sleep(0.1)
+except keyboardInterrupt:
+  GPIO.cleanup()
