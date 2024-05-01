@@ -1,0 +1,46 @@
+import requests
+import Adafruit_DHT
+import time
+
+
+channel_id = 'YOUR_CHANNEL_ID'
+read_key = 'YOUR_READ_API_KEY'
+#
+sensor = Adafruit_DHT.DHT11
+pin = 4
+
+def read_sensor():
+    humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+    if humidity is not None and temperature is not None:
+        return humidity, temperature
+    else:
+        return None, None
+
+def read_thingspeak():
+    url = f"https://api.thingspeak.com/channels/{channel_id}/feeds.json?api_key={read_key}&results=1"
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if 'feeds' in data and len(data['feeds']) > 0:
+            entry = data['feeds'][0]
+            temperature = float(entry['field1'])
+            humidity = float(entry['field2'])
+            return temperature, humidity
+        else:
+            print("No data available on ThingSpeak")
+            return None, None
+    except Exception as e:
+        print("Exception:", e)
+        return None, None
+
+def main():
+    while True:
+        temperature, humidity = read_thingspeak()
+        if temperature is not None and humidity is not None:
+            print("Temperature: {:.1f}°C, Humidity: {:.1f}%".format(temperature, humidity))
+        else:
+            print("Failed to read data from ThingSpeak")
+        time.sleep(15)  # Read every 15 seconds
+
+if name == '__main__':
+    main()
