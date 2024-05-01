@@ -1,0 +1,42 @@
+import Adafruit_DHT
+import thingspeak
+import time
+
+
+channel_id = 'YOUR_CHANNEL_ID'
+write_key = 'YOUR_WRITE_API_KEY'
+
+
+sensor = Adafruit_DHT.DHT11
+pin = 4
+
+
+client = thingspeak.Channel(channel_id, write_key)
+
+def read_sensor():
+    humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+    if humidity is not None and temperature is not None:
+        return humidity, temperature
+    else:
+        return None, None
+
+def update_thingspeak(humidity, temperature):
+    try:
+        response = client.update({'field1': temperature, 'field2': humidity})
+        if response != 0:
+            print("Failed to update ThingSpeak")
+    except Exception as e:
+        print("Exception:", e)
+
+def main():
+    while True:
+        humidity, temperature = read_sensor()
+        if humidity is not None and temperature is not None:
+            print("Temperature: {:.1f}°C, Humidity: {:.1f}%".format(temperature, humidity))
+            update_thingspeak(humidity, temperature)
+        else:
+            print("Failed to read sensor data")
+        time.sleep(15)  # Update every 15 seconds
+
+if name == '__main__':
+    main()
