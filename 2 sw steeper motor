@@ -1,0 +1,40 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+
+clockwise_button_pin = 17
+anticlockwise_button_pin = 18
+
+stepper_pins = [4, 14, 15, 23]  
+
+
+GPIO.setup(clockwise_button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(anticlockwise_button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+for pin in stepper_pins:
+    GPIO.setup(pin, GPIO.OUT)
+
+
+def rotate_clockwise():
+    
+    pass
+
+
+def rotate_anticlockwise():
+    
+    pass
+
+try:
+    while True:
+        
+        if GPIO.input(clockwise_button_pin) == GPIO.LOW:
+            rotate_clockwise()
+
+        
+        if GPIO.input(anticlockwise_button_pin) == GPIO.LOW:
+            rotate_anticlockwise()
+
+        time.sleep(0.1)
+
+except KeyboardInterrupt:
+    GPIO.cleanup()
