@@ -1,0 +1,53 @@
+import RPi.GPIO as GPIO
+import time
+
+# GPIO pins for ultrasonic sensor
+TRIG = 23
+ECHO = 24
+
+# GPIO pin for LED
+LED_PIN = 18
+
+# Set up GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIG, GPIO.OUT)
+GPIO.setup(ECHO, GPIO.IN)
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+def measure_distance():
+    
+    GPIO.output(TRIG, True)
+    time.sleep(0.00001)
+    GPIO.output(TRIG, False)
+
+    while GPIO.input(ECHO) == 0:
+        pulse_start = time.time()
+    while GPIO.input(ECHO) == 1:
+        pulse_end = time.time()
+
+    
+    pulse_duration = pulse_end - pulse_start
+    distance = pulse_duration * 17150 
+    distance = round(distance, 2)
+    return distance
+
+def main():
+    try:
+        while True: distance = measure_distance()
+            print("Distance:", distance, "cm")
+
+            if distance > 40:
+                
+                GPIO.output(LED_PIN, True)
+            else:
+                
+                GPIO.output(LED_PIN, False)
+
+            time.sleep(1)  # Measure distance every second
+except KeyboardInterrupt:
+        GPIO.cleanup()
+
+if name == '__main__':
+    main()
+
+
