@@ -1,0 +1,32 @@
+import requests
+import Adafruit_DHT
+import time
+
+sensor=Adafruit_DHT.DHT11
+pin=4
+
+try:
+    humidity,temperature=Adafruit_DHT.read_retry(sensor,pin)
+
+    if humidity is not None and temperature is not None:
+        print('temprature:{:.1f}C'.format(temperature))
+        print('humidity:{:.1f}%'.format(humidity))
+    else:
+        print('failed to get reading. Try again!')
+except KeyboardInterrupt:
+    print("program stopped by user")    
+
+url='Copy here the write url'
+url1='copy here the read url'
+
+data=({"field1":temperature,"field2":humidity})
+r=requests.post(url,data=data)
+r1=requests.get(url1)
+if r.status_code==200:
+    print("ok")
+if r1.status_code==200:
+    data1=r1.json()
+    print(data1)
+    print("ok")    
+else:
+    print("no")
